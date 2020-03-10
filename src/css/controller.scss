@@ -35,13 +35,56 @@
             .dplayer-bar .dplayer-played .dplayer-thumb {
                 transform: scale(1);
             }
+            .dplayer-highlight {
+                display: block;
+                width: 8px;
+                transform: translateX(-4px);
+                top: 4px;
+                height: 40%;
+            }
+        }
+        .dplayer-highlight {
+            z-index: 12;
+            position: absolute;
+            top: 5px;
+            width: 6px;
+            height: 20%;
+            border-radius: 6px;
+            background-color: #fff;
+            text-align: center;
+            transform: translateX(-3px);
+            transition: all .2s ease-in-out;
+            &:hover {
+                .dplayer-highlight-text {
+                    display: block;
+                }
+                &~.dplayer-bar-preview {
+                    opacity: 0;
+                }
+                &~.dplayer-bar-time {
+                    opacity: 0;
+                }
+            }
+            .dplayer-highlight-text {
+                display: none;
+                position: absolute;
+                left: 50%;
+                top: -24px;
+                padding: 5px 8px;
+                background-color: rgba(0, 0, 0, .62);
+                color: #fff;
+                border-radius: 4px;
+                font-size: 12px;
+                white-space: nowrap;
+                transform: translateX(-50%);
+            }
         }
         .dplayer-bar-preview {
             position: absolute;
             background: #fff;
             pointer-events: none;
             display: none;
-            background-size: auto 100%;
+            background-size: 16000px 100%;
         }
         .dplayer-bar-preview-canvas {
             position: absolute;
@@ -57,7 +100,6 @@
             position: absolute;
             left: 0px;
             top: -20px;
-            width: 30px;
             border-radius: 4px;
             padding: 5px 7px;
             background-color: rgba(0, 0, 0, 0.62);
@@ -235,6 +277,9 @@
                 &::placeholder {
                     color: #fff;
                     opacity: 0.8;
+                }
+                &::-ms-clear {
+                    display: none;
                 }
             }
         }
@@ -606,4 +651,22 @@
             }
         }
     }
+}
+
+.dplayer-mobile-play {
+    display: none;
+    width: 50px;
+    height: 50px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    opacity: 0.8;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }

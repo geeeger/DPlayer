@@ -1,7 +1,5 @@
-import utils from './utils';
-
-class Time {
-    constructor (player) {
+class Timer {
+    constructor(player) {
         this.player = player;
 
         window.requestAnimationFrame = (() =>
@@ -10,26 +8,25 @@ class Time {
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame ||
-            function (callback) {
+            function(callback) {
                 window.setTimeout(callback, 1000 / 60);
-            }
-        )();
+            })();
 
-        this.types = ['loading', 'progress', 'info', 'fps'];
+        this.types = ['loading', 'info', 'fps'];
 
         this.init();
     }
 
-    init () {
-        for (let i = 0; i < this.types.length; i++) {
-            const type = this.types[i];
-            if (type !== 'fps') {
-                this[`init${type}Checker`]();
+    init() {
+        this.types.map((item) => {
+            if (item !== 'fps') {
+                this[`init${item}Checker`]();
             }
-        }
+            return item;
+        });
     }
 
-    initloadingChecker () {
+    initloadingChecker() {
         let lastPlayPos = 0;
         let currentPlayPos = 0;
         let bufferingDetected = false;
@@ -37,15 +34,11 @@ class Time {
             if (this.enableloadingChecker) {
                 // whether the video is buffering
                 currentPlayPos = this.player.video.currentTime;
-                if (!bufferingDetected
-                    && currentPlayPos === lastPlayPos
-                    && !this.player.video.paused) {
+                if (!bufferingDetected && currentPlayPos === lastPlayPos && !this.player.video.paused) {
                     this.player.container.classList.add('dplayer-loading');
                     bufferingDetected = true;
                 }
-                if (bufferingDetected
-                    && currentPlayPos > lastPlayPos
-                    && !this.player.video.paused) {
+                if (bufferingDetected && currentPlayPos > lastPlayPos && !this.player.video.paused) {
                     this.player.container.classList.remove('dplayer-loading');
                     bufferingDetected = false;
                 }
@@ -54,44 +47,30 @@ class Time {
         }, 100);
     }
 
-    initprogressChecker () {
-        this.progressChecker = setInterval(() => {
-            if (this.enableprogressChecker) {
-                this.player.bar.set('played', this.player.video.currentTime / this.player.video.duration, 'width');
-                const currentTime = utils.secondToTime(this.player.video.currentTime);
-                if (this.player.template.ptime.innerHTML !== currentTime) {
-                    this.player.template.ptime.innerHTML = utils.secondToTime(this.player.video.currentTime);
-                }
-            }
-        }, 100);
-    }
-
-    initfpsChecker () {
+    initfpsChecker() {
         window.requestAnimationFrame(() => {
             if (this.enablefpsChecker) {
                 this.initfpsChecker();
                 if (!this.fpsStart) {
                     this.fpsStart = new Date();
                     this.fpsIndex = 0;
-                }
-                else {
+                } else {
                     this.fpsIndex++;
                     const fpsCurrent = new Date();
                     if (fpsCurrent - this.fpsStart > 1000) {
-                        this.player.infoPanel.fps(this.fpsIndex / (fpsCurrent - this.fpsStart) * 1000);
+                        this.player.infoPanel.fps((this.fpsIndex / (fpsCurrent - this.fpsStart)) * 1000);
                         this.fpsStart = new Date();
                         this.fpsIndex = 0;
                     }
                 }
-            }
-            else {
+            } else {
                 this.fpsStart = 0;
                 this.fpsIndex = 0;
             }
         });
     }
 
-    initinfoChecker () {
+    initinfoChecker() {
         this.infoChecker = setInterval(() => {
             if (this.enableinfoChecker) {
                 this.player.infoPanel.update();
@@ -99,7 +78,7 @@ class Time {
         }, 1000);
     }
 
-    enable (type) {
+    enable(type) {
         this[`enable${type}Checker`] = true;
 
         if (type === 'fps') {
@@ -107,13 +86,17 @@ class Time {
         }
     }
 
-    disable (type) {
+    disable(type) {
         this[`enable${type}Checker`] = false;
     }
 
-    destroy (type) {
-        this[`${type}Checker`] && clearInterval(this[`${type}Checker`]);
+    destroy() {
+        this.types.map((item) => {
+            this[`enable${item}Checker`] = false;
+            this[`${item}Checker`] && clearInterval(this[`${item}Checker`]);
+            return item;
+        });
     }
 }
 
-export default Time;
+export default Timer;

@@ -1,5 +1,5 @@
 ---
-search: english
+sidebar: auto
 ---
 
 # Sponsor DPlayer Development
@@ -16,32 +16,44 @@ You can support DPlayer development via the following methods:
 
 We accept donations through these channels:
 
-- [Paypal](https://www.paypal.me/DIYgod)
-- [WeChat Pay](https://i.imgur.com/aq6PtWa.png)
-- [Alipay](https://i.imgur.com/wv1Pj2k.png)
-- Bitcoin: 13CwQLHzPYm2tewNMSJBeArbbRM5NSmCD1
+-   [Paypal](https://www.paypal.me/DIYgod)
+-   [WeChat Pay](https://i.imgur.com/aq6PtWa.png)
+-   [Alipay](https://i.imgur.com/wv1Pj2k.png)
 
 ## Recurring Pledges
 
 Recurring pledges come with exclusive perks, e.g. having your name or your company logo listed in the DPlayer GitHub repository and this website.
 
-- Become a backer or sponsor via [OpenCollective](https://opencollective.com/dplayer)
-- E-mail us: i#html.love
+-   Become a Backer or a Sponser on [Patreon](https://www.patreon.com/DIYgod)
+-   E-mail us: i#diygod.me
 
 ## Current Premium Sponsors
 
 ### Special Sponsors
 
-<a href="https://pear.hk/" target="_blank">
-    <img width="222px" src="https://i.imgur.com/5qQYmfc.png">
-</a>
-<a href="https://console.upyun.com/register/?invite=BkLZ2Xqob" target="_blank">
-    <img width="222px" src="https://imgur.com/apG1uKf.png">
+&nbsp;
+
+<a href="https://www.polyv.net/?f=git_DPlayer-20190518-02" target="_blank">
+    <img width="600px" src="https://i.loli.net/2019/06/03/5cf4028f7b8f716387.gif">
 </a>
 
-### OpenCollective backers
+&nbsp;
 
-![](https://opencollective.com/DPlayer/backers.svg?width=890)
+<a href="https://www.9ccms.net" target="_blank">
+    <img width="280px" src="https://i.imgur.com/YBV6kfb.png">
+</a>
+
+&nbsp;
+
+<a href="https://www.dogecloud.com/?ref=dplayer" target="_blank">
+    <img width="280px" src="https://i.imgur.com/C2NgugY.png">
+</a>
+
+### Sponsors
+
+| [极酷社](https://www.acg.app) |
+| :---------------------------: |
+
 
 ## DPlayer contributors
 

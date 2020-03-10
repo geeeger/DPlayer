@@ -1,5 +1,5 @@
 class Subtitle {
-    constructor (container, video, options, events) {
+    constructor(container, video, options, events) {
         this.container = container;
         this.video = video;
         this.options = options;
@@ -8,7 +8,7 @@ class Subtitle {
         this.init();
     }
 
-    init () {
+    init() {
         this.container.style.fontSize = this.options.fontSize;
         this.container.style.bottom = this.options.bottom;
         this.container.style.color = this.options.color;
@@ -18,35 +18,35 @@ class Subtitle {
 
             track.oncuechange = () => {
                 const cue = track.activeCues[0];
+                this.container.innerHTML = '';
                 if (cue) {
-                    this.container.innerHTML = '';
-                    const p = document.createElement('p');
-                    p.appendChild(cue.getCueAsHTML());
-                    this.container.appendChild(p);
-                }
-                else {
-                    this.container.innerHTML = '';
+                    const template = document.createElement('div');
+                    template.appendChild(cue.getCueAsHTML());
+                    const trackHtml = template.innerHTML
+                        .split(/\r?\n/)
+                        .map((item) => `<p>${item}</p>`)
+                        .join('');
+                    this.container.innerHTML = trackHtml;
                 }
                 this.events.trigger('subtitle_change');
             };
         }
     }
 
-    show () {
+    show() {
         this.container.classList.remove('dplayer-subtitle-hide');
         this.events.trigger('subtitle_show');
     }
 
-    hide () {
+    hide() {
         this.container.classList.add('dplayer-subtitle-hide');
         this.events.trigger('subtitle_hide');
     }
 
-    toggle () {
+    toggle() {
         if (this.container.classList.contains('dplayer-subtitle-hide')) {
             this.show();
-        }
-        else {
+        } else {
             this.hide();
         }
     }

@@ -2,34 +2,34 @@
 sidebar: auto
 ---
 
-# Ecosystem
+# 生态
 
-Let's make DPlayer better, feel free to submit yours in [`Let me know!`](https://github.com/MoePlayer/DPlayer/issues/31)
+让 DPlayer 变得更好，请随意在 [`Let me know!`](https://github.com/MoePlayer/DPlayer/issues/31) 提交你的项目和产品
 
-## Help
+## 帮助
 
-### Joining the Discussion
+### 参与讨论
 
--   [Telegram Group](https://t.me/adplayer)
+-   [Telegram 群](https://t.me/adplayer)
 
-### Creating issue
+### 提交 issue
 
 -   [MoePlayer/DPlayer/issues](https://github.com/MoePlayer/DPlayer/issues)
 
-## Related Projects
+## 相关项目
 
-### Tooling
+### 工具
 
 -   [DPlayer-thumbnails](https://github.com/MoePlayer/DPlayer-thumbnails): generate video thumbnails
 
-### Danamku api
+### 弹幕接口
 
 -   [DPlayer-node](https://github.com/MoePlayer/DPlayer-node): Node.js
 -   [laravel-danmaku](https://github.com/MoePlayer/laravel-danmaku): PHP
 -   [dplayer-live-backend](https://github.com/Izumi-kun/dplayer-live-backend): Node.js, WebSocket live backend
 -   [RailsGun](https://github.com/MoePlayer/RailsGun): Ruby
 
-### Plugins
+### 插件
 
 -   [DPlayer-for-typecho](https://github.com/volio/DPlayer-for-typecho): Typecho
 -   [Hexo-tag-dplayer](https://github.com/NextMoe/hexo-tag-dplayer): Hexo
@@ -41,12 +41,12 @@ Let's make DPlayer better, feel free to submit yours in [`Let me know!`](https:/
 -   [Vue-DPlayer](https://github.com/sinchang/vue-dplayer): Vue
 -   [react-dplayer](https://github.com/hnsylitao/react-dplayer): React
 
-### Other
+### 其他
 
 -   [DPlayer-Lite](https://github.com/kn007/DPlayer-Lite): lite version
 -   [hlsjs-p2p-engine](https://github.com/cdnbye/hlsjs-p2p-engine)
 
-## Who use DPlayer?
+## 谁在用 DPlayer?
 
 -   [学习强国](https://itunes.apple.com/cn/app/%E5%AD%A6%E4%B9%A0%E5%BC%BA%E5%9B%BD/id1426355645?mt=8): “学习强国”学习平台精心打造的手机客户端
 -   [小红书](https://www.xiaohongshu.com/): 中国最大的生活社区分享平台，同时也是发现全球好物的电商平台
@@ -57,9 +57,3 @@ Let's make DPlayer better, feel free to submit yours in [`Let me know!`](https:/
 -   [纸飞机南航青年网络社区](http://my.nuaa.edu.cn/video-video.html): 南京航空航天大学门户网站
 -   [otomads](https://otomads.com/): 专注于音 MAD 的视频弹幕网站
 -   [Cloudreve](https://github.com/HFO4/Cloudreve): 基于 ThinkPHP 构建的网盘系统
-
-## Contributors
-
-This project exists thanks to all the people who contribute.
-
-<a href="https://github.com/MoePlayer/DPlayer/graphs/contributors"><img src="https://opencollective.com/DPlayer/contributors.svg?width=890" /></a>

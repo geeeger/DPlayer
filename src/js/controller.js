@@ -3,7 +3,7 @@ import Thumbnails from './thumbnails';
 import Icons from './icons';
 
 class Controller {
-    constructor (player) {
+    constructor(player) {
         this.player = player;
 
         this.autoHideTimer = 0;
@@ -29,13 +29,18 @@ class Controller {
         this.initQualityButton();
         this.initScreenshotButton();
         this.initSubtitleButton();
+        this.initHighlights();
         if (!utils.isMobile) {
             this.initVolumeButton();
         }
     }
 
-    initPlayButton () {
+    initPlayButton() {
         this.player.template.playButton.addEventListener('click', () => {
+            this.player.toggle();
+        });
+
+        this.player.template.mobilePlayButton.addEventListener('click', () => {
             this.player.toggle();
         });
 
@@ -46,8 +51,7 @@ class Controller {
             this.player.template.controllerMask.addEventListener('click', () => {
                 this.player.toggle();
             });
-        }
-        else {
+        } else {
             this.player.template.videoWrap.addEventListener('click', () => {
                 this.toggle();
             });
@@ -57,24 +61,47 @@ class Controller {
         }
     }
 
-    initThumbnails () {
+    initHighlights() {
+        this.player.on('durationchange', () => {
+            if (this.player.video.duration !== 1 && this.player.video.duration !== Infinity) {
+                if (this.player.options.highlight) {
+                    const highlights = document.querySelectorAll('.dplayer-highlight');
+                    [].slice.call(highlights, 0).forEach((item) => {
+                        this.player.template.playedBarWrap.removeChild(item);
+                    });
+                    for (let i = 0; i < this.player.options.highlight.length; i++) {
+                        if (!this.player.options.highlight[i].text || !this.player.options.highlight[i].time) {
+                            continue;
+                        }
+                        const p = document.createElement('div');
+                        p.classList.add('dplayer-highlight');
+                        p.style.left = (this.player.options.highlight[i].time / this.player.video.duration) * 100 + '%';
+                        p.innerHTML = '<span class="dplayer-highlight-text">' + this.player.options.highlight[i].text + '</span>';
+                        this.player.template.playedBarWrap.insertBefore(p, this.player.template.playedBarTime);
+                    }
+                }
+            }
+        });
+    }
+
+    initThumbnails() {
         if (this.player.options.video.thumbnails) {
             this.thumbnails = new Thumbnails({
                 container: this.player.template.barPreview,
                 barWidth: this.player.template.barWrap.offsetWidth,
                 url: this.player.options.video.thumbnails,
-                events: this.player.events
+                events: this.player.events,
             });
 
             this.player.on('loadedmetadata', () => {
-                this.thumbnails.resize(160, this.player.video.videoHeight / this.player.video.videoWidth * 160);
+                this.thumbnails.resize(160, (this.player.video.videoHeight / this.player.video.videoWidth) * 160, this.player.template.barWrap.offsetWidth);
             });
         }
     }
 
-    initPlayedBar () {
+    initPlayedBar() {
         const thumbMove = (e) => {
-            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getElementViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
+            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             this.player.bar.set('played', percentage, 'width');
@@ -84,23 +111,23 @@ class Controller {
         const thumbUp = (e) => {
             document.removeEventListener(utils.nameMap.dragEnd, thumbUp);
             document.removeEventListener(utils.nameMap.dragMove, thumbMove);
-            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getElementViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
+            let percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.playedBarWrap)) / this.player.template.playedBarWrap.clientWidth;
             percentage = Math.max(percentage, 0);
             percentage = Math.min(percentage, 1);
             this.player.bar.set('played', percentage, 'width');
             this.player.seek(this.player.bar.get('played') * this.player.video.duration);
-            this.player.time.enable('progress');
+            this.player.timer.enable('progress');
         };
 
         this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragStart, () => {
-            this.player.time.disable('progress');
+            this.player.timer.disable('progress');
             document.addEventListener(utils.nameMap.dragMove, thumbMove);
             document.addEventListener(utils.nameMap.dragEnd, thumbUp);
         });
 
         this.player.template.playedBarWrap.addEventListener(utils.nameMap.dragMove, (e) => {
             if (this.player.video.duration) {
-                const px = utils.cumulativeOffset(this.player.template.playedBarWrap).left;
+                const px = this.player.template.playedBarWrap.getBoundingClientRect().left;
                 const tx = (e.clientX || e.changedTouches[0].clientX) - px;
                 if (tx < 0 || tx > this.player.template.playedBarWrap.offsetWidth) {
                     return;
@@ -110,7 +137,7 @@ class Controller {
                     this.thumbnails && this.thumbnails.show();
                 }
                 this.thumbnails && this.thumbnails.move(tx);
-                this.player.template.playedBarTime.style.left = `${(tx - 20)}px`;
+                this.player.template.playedBarTime.style.left = `${tx - (time >= 3600 ? 25 : 20)}px`;
                 this.player.template.playedBarTime.innerText = utils.secondToTime(time);
                 this.player.template.playedBarTime.classList.remove('hidden');
             }
@@ -139,7 +166,7 @@ class Controller {
         }
     }
 
-    initFullButton () {
+    initFullButton() {
         this.player.template.browserFullButton.addEventListener('click', () => {
             this.player.fullScreen.toggle('browser');
         });
@@ -149,12 +176,12 @@ class Controller {
         });
     }
 
-    initVolumeButton () {
+    initVolumeButton() {
         const vWidth = 35;
 
         const volumeMove = (event) => {
             const e = event || window.event;
-            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getElementViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
             this.player.volume(percentage);
         };
         const volumeUp = () => {
@@ -165,7 +192,7 @@ class Controller {
 
         this.player.template.volumeBarWrapWrap.addEventListener('click', (event) => {
             const e = event || window.event;
-            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getElementViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
+            const percentage = ((e.clientX || e.changedTouches[0].clientX) - utils.getBoundingClientRectViewLeft(this.player.template.volumeBarWrap) - 5.5) / vWidth;
             this.player.volume(percentage);
         });
         this.player.template.volumeBarWrapWrap.addEventListener(utils.nameMap.dragStart, () => {
@@ -173,13 +200,12 @@ class Controller {
             document.addEventListener(utils.nameMap.dragEnd, volumeUp);
             this.player.template.volumeButton.classList.add('dplayer-volume-active');
         });
-        this.player.template.volumeIcon.addEventListener('click', () => {
+        this.player.template.volumeButtonIcon.addEventListener('click', () => {
             if (this.player.video.muted) {
                 this.player.video.muted = false;
                 this.player.switchVolumeIcon();
                 this.player.bar.set('volume', this.player.volume(), 'width');
-            }
-            else {
+            } else {
                 this.player.video.muted = true;
                 this.player.template.volumeIcon.innerHTML = Icons.volumeOff;
                 this.player.bar.set('volume', 0, 'width');
@@ -187,7 +213,7 @@ class Controller {
         });
     }
 
-    initQualityButton () {
+    initQualityButton() {
         if (this.player.options.video.quality) {
             this.player.template.qualityList.addEventListener('click', (e) => {
                 if (e.target.classList.contains('dplayer-quality-item')) {
@@ -197,7 +223,7 @@ class Controller {
         }
     }
 
-    initScreenshotButton () {
+    initScreenshotButton() {
         if (this.player.options.screenshot) {
             this.player.template.camareButton.addEventListener('click', () => {
                 const canvas = document.createElement('canvas');
@@ -223,7 +249,7 @@ class Controller {
         }
     }
 
-    initSubtitleButton () {
+    initSubtitleButton() {
         if (this.player.options.subtitle) {
             this.player.events.on('subtitle_show', () => {
                 this.player.template.subtitleButton.dataset.balloon = this.player.tran('Hide subtitle');
@@ -242,7 +268,7 @@ class Controller {
         }
     }
 
-    setAutoHide () {
+    setAutoHide() {
         this.show();
         clearTimeout(this.autoHideTimer);
         this.autoHideTimer = setTimeout(() => {
@@ -252,30 +278,29 @@ class Controller {
         }, 3000);
     }
 
-    show () {
+    show() {
         this.player.container.classList.remove('dplayer-hide-controller');
     }
 
-    hide () {
+    hide() {
         this.player.container.classList.add('dplayer-hide-controller');
         this.player.setting.hide();
         this.player.comment && this.player.comment.hide();
     }
 
-    isShow () {
+    isShow() {
         return !this.player.container.classList.contains('dplayer-hide-controller');
     }
 
-    toggle () {
+    toggle() {
         if (this.isShow()) {
             this.hide();
-        }
-        else {
+        } else {
             this.show();
         }
     }
 
-    destroy () {
+    destroy() {
         clearTimeout(this.autoHideTimer);
     }
 }
