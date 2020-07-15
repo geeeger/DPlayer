@@ -49,6 +49,8 @@ class DPlayer {
         }
         if (this.options.live) {
             this.container.classList.add('dplayer-live');
+        } else {
+            this.container.classList.remove('dplayer-live');
         }
         if (utils.isMobile) {
             this.container.classList.add('dplayer-mobile');
@@ -177,7 +179,7 @@ class DPlayer {
     /**
      * Play video
      */
-    play() {
+    play(fromNative) {
         this.paused = false;
         if (this.video.paused && !utils.isMobile) {
             this.bezel.switch(Icons.play);
@@ -186,12 +188,14 @@ class DPlayer {
         this.template.playButton.innerHTML = Icons.pause;
         this.template.mobilePlayButton.innerHTML = Icons.pause;
 
-        const playedPromise = Promise.resolve(this.video.play());
-        playedPromise
-            .catch(() => {
-                this.pause();
-            })
-            .then(() => {});
+        if (!fromNative) {
+            const playedPromise = Promise.resolve(this.video.play());
+            playedPromise
+                .catch(() => {
+                    this.pause();
+                })
+                .then(() => {});
+        }
         this.timer.enable('loading');
         this.container.classList.remove('dplayer-paused');
         this.container.classList.add('dplayer-playing');
@@ -210,7 +214,7 @@ class DPlayer {
     /**
      * Pause video
      */
-    pause() {
+    pause(fromNative) {
         this.paused = true;
         this.container.classList.remove('dplayer-loading');
 
@@ -220,7 +224,9 @@ class DPlayer {
 
         this.template.playButton.innerHTML = Icons.play;
         this.template.mobilePlayButton.innerHTML = Icons.play;
-        this.video.pause();
+        if (!fromNative) {
+            this.video.pause();
+        }
         this.timer.disable('loading');
         this.container.classList.remove('dplayer-playing');
         this.container.classList.add('dplayer-paused');
@@ -366,11 +372,13 @@ class DPlayer {
                 case 'flv':
                     if (window.flvjs) {
                         if (window.flvjs.isSupported()) {
-                            const options = Object.assign(this.options.pluginOptions.flvjs, {
-                                type: 'flv',
-                                url: video.src,
-                            });
-                            const flvPlayer = window.flvjs.createPlayer(options);
+                            const flvPlayer = window.flvjs.createPlayer(
+                                Object.assign(this.options.pluginOptions.flv.mediaDataSource || {}, {
+                                    type: 'flv',
+                                    url: video.src,
+                                }),
+                                this.options.pluginOptions.flv.config
+                            );
                             this.plugins.flvjs = flvPlayer;
                             flvPlayer.attachMediaElement(video);
                             flvPlayer.load();
@@ -391,10 +399,7 @@ class DPlayer {
                 // https://github.com/Dash-Industry-Forum/dash.js
                 case 'dash':
                     if (window.dashjs) {
-                        const dashjsPlayer = window.dashjs
-                            .MediaPlayer()
-                            .create()
-                            .initialize(video, video.src, false);
+                        const dashjsPlayer = window.dashjs.MediaPlayer().create().initialize(video, video.src, false);
                         const options = this.options.pluginOptions.dash;
                         dashjsPlayer.updateSettings(options);
                         this.plugins.dash = dashjsPlayer;
@@ -423,6 +428,7 @@ class DPlayer {
                                 const file = torrent.files.find((file) => file.name.endsWith('.mp4'));
                                 file.renderTo(this.video, {
                                     autoplay: this.options.autoplay,
+                                    controls: false,
                                 });
                             });
                             this.events.on('destroy', () => {
@@ -486,13 +492,13 @@ class DPlayer {
 
         this.on('play', () => {
             if (this.paused) {
-                this.play();
+                this.play(true);
             }
         });
 
         this.on('pause', () => {
             if (!this.paused) {
-                this.pause();
+                this.pause(true);
             }
         });
 

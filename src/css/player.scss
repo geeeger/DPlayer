@@ -11,7 +11,7 @@
     svg {
         width: 100%;
         height: 100%;
-        
+
         path,
         circle {
             fill: #fff;
@@ -89,7 +89,7 @@
 
     &.dplayer-arrow {
         .dplayer-danmaku {
-            font-size: 18px
+            font-size: 18px;
         }
         .dplayer-icon {
             margin: 0 -3px;
@@ -97,7 +97,6 @@
     }
 
     &.dplayer-playing {
-
         .dplayer-danmaku .dplayer-danmaku-move {
             animation-play-state: running;
         }
@@ -160,13 +159,14 @@
         z-index: 100000;
         left: 0;
         top: 0;
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
     }
     &.dplayer-mobile {
         .dplayer-controller .dplayer-icons {
             .dplayer-volume,
             .dplayer-camera-icon,
+            .dplayer-airplay-icon,
             .dplayer-play-icon {
                 display: none;
             }
